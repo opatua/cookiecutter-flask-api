@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request
 from flask_restful import Resource
 from http import HTTPStatus
 from marshmallow import ValidationError
@@ -36,16 +36,16 @@ class Login(Resource):
             return {'message': USER_INVALID_CREDENTIAL}, HTTPStatus.BAD_REQUEST
 
         token = Auth.generate_token(user)
-        payload = {
-            "token": token,
-            "user": {
-                "id": user.id,
-                "email": user.email,
-                "name": user.name,
-                "is_active": user.is_active
+        response = {
+            'token': token,
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'name': user.name,
+                'is_active': user.is_active
             }
         }
-        return jsonify(payload)
+        return response, HTTPStatus.OK
 
 
 class Register(Resource):
@@ -69,9 +69,9 @@ class Register(Resource):
         user.save()
         data = user_schema.dump(user).data
 
-        payload = {
+        response = {
             'message': 'success',
             'data': data
         }
 
-        return jsonify(payload)
+        return response, HTTPStatus.CREATED
